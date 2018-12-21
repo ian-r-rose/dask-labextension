@@ -31,6 +31,8 @@ async def make_cluster(configuration: dict) -> Cluster:
         configuration
     )
 
+    _validate_cluster_configuration(configuration)
+
     adaptive = None
     if configuration.get('adapt'):
         adaptive = cluster.adapt(**configuration.get('adapt'))
@@ -246,6 +248,18 @@ def make_cluster_model(
 
     return model
 
+def _validate_cluster_configuration(model):
+    if model.get('id') is not None:
+        raise Exception('Cannot manually set the unique id for a cluster')
+    if model.get('memory') is not None or model.get('cores') is not None:
+        raise Exception('Cannot manually set memory/core usage for a cluster')
+    if model.get('dashboard_link') is not None:
+        raise Exception('Cannot manually set dashboard link for a cluster')
+    if model.get('scheduler_address') is not None:
+        raise Exception('Cannot manually set scheduler address for a cluster')
+    adapt = model.get('adapt')
+    if adapt and not (adapt.get('maximum') and adapt.get('minimum')):
+        raise Exception('Must set minimum and maximum for an adaptive cluster')
 
 # Create a default cluster manager
 # to keep track of clusters.

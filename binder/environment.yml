@@ -1,0 +1,16 @@
+name: lab
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - bokeh
+  - dask
+  - distributed
+  - jupyterlab
+  - nodejs
+  - notebook
+  - pip
+  - python=3.7
+  - tornado=5.1.1
+  - pip:
+    - dask-labextension

@@ -27,8 +27,8 @@ async def make_cluster(configuration: dict) -> Cluster:
     kwargs = dask.config.get("labextension.factory.kwargs")
     kwargs = {key.replace("-", "_"): entry for key, entry in kwargs.items()}
 
-    cluster = await Cluster(
-        *dask.config.get("labextension.factory.args"), **kwargs, asynchronous=True
+    cluster = Cluster(
+        *dask.config.get("labextension.factory.args"), **kwargs, asynchronous=False
     )
 
     configuration = dask.config.merge(
@@ -117,7 +117,7 @@ class DaskClusterManager:
         """
         cluster = self._clusters.get(cluster_id)
         if cluster:
-            await cluster.close()
+            cluster.close()
             self._clusters.pop(cluster_id)
             name = self._cluster_names.pop(cluster_id)
             adaptive = self._adaptives.pop(cluster_id, None)

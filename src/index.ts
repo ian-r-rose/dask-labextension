@@ -219,10 +219,16 @@ function activate(
     consoleTracker
   ];
 
-  // A function to recreate a dask client on reconnect.
+  // A function to recreate a dask client on restart.
+  // Wait for a "starting" status, mark a flag, and once the
+  // kernel is ready, inject the client connection code.
+  let shouldInject = false;
   const injectOnSessionStatusChanged = (session: IClientSession) => {
-    if (session.status === 'connected') {
+    if (session.status === 'idle' && shouldInject) {
+      shouldInject = false;
       createClientForSession(session);
+    } else if (session.status === 'starting') {
+      shouldInject = true;
     }
   };
 
